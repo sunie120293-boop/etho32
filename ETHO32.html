@@ -1,181 +1,116 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#e5f2e9">
-<title>에토 ETHO | 클라우드 교육지원</title>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta name="theme-color" content="#eff6f0"/>
+<title>에토 ETHO | 함께 자라는 교육</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500;600;700&display=swap');
-:root{
-  --main:#2f826d;--sub:#e9f5ed;--ink:#253f39;--line:#dfeae3;--bg:#f8fbf8;
-  --soft:#f1f8f4;--accent:#eebf78;--lavender:#f2effb;--muted:#69827a;
-  color-scheme:light;
-}
-*{box-sizing:border-box}
-html{scroll-behavior:smooth}
-/* 모든 UI 요소를 한글 명조체로 통일: 과거 주아체 CSS보다 우선 */
-html,body,body *,button,input,textarea,select,option{font-family:'Noto Serif KR','Nanum Myeongjo','Malgun Myeongjo','Batang',serif!important}
-body{margin:0;background:radial-gradient(ellipse at 88% 1%,#edf7f1 0,transparent 35%),var(--bg);color:var(--ink);font-size:15px;line-height:1.78;letter-spacing:-.025em;-webkit-font-smoothing:antialiased}
-button,input,textarea,select{font-size:inherit}
-button{cursor:pointer;border:1px solid #d8e6dd;border-radius:14px;padding:12px 17px;background:#fff;color:var(--ink);font-weight:600;transition:transform .15s,background .15s,border-color .15s,box-shadow .15s}
-button:hover:not(:disabled){transform:translateY(-1px);border-color:var(--main);box-shadow:0 5px 18px rgba(29,100,73,.08)}
-button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid #9bd5bc;outline-offset:2px}
-button:disabled{opacity:.55;cursor:default}
-.primary{background:var(--main);color:#fff;border-color:var(--main)}
-.primary:hover:not(:disabled){background:#256c5a;color:#fff}
-.soft{background:var(--sub);color:var(--main)}
-.mini{font-size:12px;padding:9px 13px}
-.danger{color:#ad3f52}
-.wrap{max-width:1070px;margin:auto;padding:22px 24px 58px}
-.head{display:flex;gap:18px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:23px;background:rgba(255,255,255,.76);border:1px solid #e6efe8;border-radius:20px;padding:13px 17px;box-shadow:0 10px 35px rgba(25,67,48,.025)}
-.brand{display:flex;align-items:center;gap:13px}
-.mark{width:56px;height:56px;flex:0 0 56px;background:#25856a;color:white;border-radius:17px;display:grid;place-items:center;font-size:31px;font-weight:700;box-shadow:0 8px 23px rgba(40,122,95,.12)}
-.brand strong{display:block;font-size:23px;font-weight:700;line-height:1.25;letter-spacing:-.045em}
-.brand small{color:#6b8f83;font-size:10px;letter-spacing:1.9px;font-weight:600}
-.user{display:flex;align-items:center;justify-content:flex-end;gap:10px;flex-wrap:wrap;font-size:12px}
-#loginState{max-width:225px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#607b71}
-#loginBtn{border-radius:30px;padding:11px 17px;font-size:13px;box-shadow:0 5px 16px rgba(34,120,92,.12)}
-.muted{color:#637d72;font-size:13px}
-.tiny{color:#779187;font-size:11px}
-.hero{position:relative;overflow:hidden;background:linear-gradient(115deg,#eaf6ef 0%,#f7f9ed 64%,#fff7e9 100%);border:1px solid #dcebe1;border-radius:27px;padding:33px 38px;box-shadow:0 15px 45px rgba(44,98,70,.035)}
-.hero::after{content:'';position:absolute;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,.45);right:-74px;top:-88px;pointer-events:none}
-.hero-layout{display:flex;align-items:center;justify-content:space-between;gap:32px;position:relative;z-index:1}
-.hero-copy{flex:1}
-.hero h1{font-size:clamp(25px,3.7vw,35px);line-height:1.44;margin:12px 0;font-weight:700;letter-spacing:-.05em}
-.hero p{margin:0;max-width:590px;line-height:1.9}
-.hero-side{width:202px;display:grid;gap:10px;flex:none}
-.hero-chip{background:rgba(255,255,255,.75);padding:12px 13px;border:1px solid rgba(151,201,170,.28);border-radius:16px;font-size:13px;font-weight:600;box-shadow:0 6px 21px rgba(40,93,67,.035)}
-.hero-chip:nth-child(2){margin-left:23px;background:#fffaf2}
-.hero-chip:nth-child(3){margin-left:8px;background:#f3f1fa}
-.card{background:#fff;border:1px solid var(--line);border-radius:23px;padding:27px 30px;margin-top:18px;box-shadow:0 10px 28px rgba(29,68,48,.025)}
-.card h2{font-size:20px;margin:0 0 14px;font-weight:700;letter-spacing:-.04em}
-.card h2::after{content:'';display:block;background:linear-gradient(90deg,#98d6b8,transparent);height:2px;width:35px;margin-top:7px}
-.roles,.topics,.actions,.tabs{display:flex;gap:10px;flex-wrap:wrap}
-.roles button{flex:1;min-width:145px;text-align:left;font-size:17px;padding:17px 19px;min-height:95px;border-radius:17px}
-.roles button small{display:block;color:#7e968c;font-size:11px;margin-top:3px;font-weight:400}
-.roles button[data-role=student]{background:#fffdf6}
-.roles button[data-role=parent]{background:#fcfaff}
-.roles button[data-role=teacher]{background:#f6fbfb}
-.active{background:var(--sub)!important;border:2px solid var(--main)!important;color:var(--main)!important;box-shadow:0 4px 18px rgba(41,129,91,.055)}
-.topics button{font-size:13px;padding:10px 15px;border-radius:30px}
-.cols{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 19px}
-label{display:block;font-size:13px;font-weight:600;margin:13px 0}
-input,select,textarea{display:block;width:100%;padding:13px 15px;margin-top:7px;border:1px solid #d6e4da;border-radius:13px;background:#fcfefd;color:var(--ink);line-height:1.55;transition:border .15s,box-shadow .15s}
-input:focus,select:focus,textarea:focus{border-color:#7bbda1;box-shadow:0 0 0 3px rgba(97,181,142,.1);outline:none}
-textarea{resize:vertical;min-height:94px}
-select{cursor:pointer}
-.note{background:#f1f8f4;border-radius:13px;border:1px solid #e1ede4;padding:13px 16px;font-size:12px;margin:16px 0;color:#517164}
-.warn{background:#fff9ed;border-color:#f2e3c4;color:#765f40}
-.hidden{display:none!important}
-.actions{align-items:center;margin-top:16px}
-.message{font-size:12px;color:var(--main)}
-.result{white-space:pre-wrap;line-height:2;font-size:14px;letter-spacing:-.022em}
-.entry{padding:17px;border:1px solid var(--line);border-radius:15px;margin:12px 0;background:#fbfdfb}
-.entry p{white-space:pre-wrap;font-size:13px}
-.entry h3{font-size:16px;margin:5px 0}
-.foot{text-align:center;font-size:11px;color:#819d8e;padding:25px}
-.tabs{margin-bottom:15px}
-.tabs button.active{background:var(--main)!important;color:white!important}
-.badge{display:inline-block;background:#deeee5;color:#267c63;border-radius:22px;padding:4px 12px;font-size:11px;font-weight:600;letter-spacing:-.02em}
-#research{border:1px solid #bddbcc;background:#fffefd}
-.cloud-note{display:flex;align-items:center;gap:8px;margin:10px 0 0;font-size:12px;color:#668177}
-.cloud-dot{width:8px;height:8px;border-radius:50%;background:#64ae8b;flex:none}
-@media(max-width:700px){.wrap{padding:12px}.head{padding:12px}.hero{padding:24px 21px}.hero-side{display:none}.card{padding:20px 18px}.cols{grid-template-columns:1fr}.brand strong{font-size:20px}.user{width:100%;justify-content:space-between}.roles button{min-width:calc(50% - 10px)}.hero h1{font-size:26px}}
-@media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important;scroll-behavior:auto!important}}
+:root{--green:#287b68;--light:#e9f6ed;--ink:#263f37;--muted:#657e73;--line:#dbe9df;--bg:#f7faf7;--surface:#fff;--shadow:0 12px 35px rgba(36,90,62,.045)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}html,body,body *,button,input,textarea,select,option{font-family:'Noto Serif KR','Batang','Malgun Myeongjo',serif!important}body{margin:0;background:radial-gradient(ellipse at 90% 3%,#e8f6ee,transparent 31%),var(--bg);color:var(--ink);font-size:14px;line-height:1.8;letter-spacing:-.018em}
+button,input,textarea,select{font-size:inherit}button{border:1px solid var(--line);border-radius:13px;background:#fff;color:var(--ink);padding:11px 15px;font-weight:600;cursor:pointer;transition:.15s}button:hover{border-color:#8dbba4;transform:translateY(-1px)}button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #afdcc2;outline-offset:1px}button:disabled{opacity:.52;cursor:not-allowed;transform:none}.primary{color:#fff;background:var(--green);border-color:var(--green)}.soft{color:var(--green);background:var(--light)}.danger{color:#b04d56}.small{padding:7px 10px;font-size:12px}.wrap{max-width:1040px;margin:auto;padding:20px 22px 55px}.top{display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap;background:rgba(255,255,255,.92);border:1px solid #e1ece4;border-radius:20px;padding:13px 18px;box-shadow:var(--shadow)}.brand{display:flex;gap:12px;align-items:center}.mark{background:var(--green);color:#fff;width:55px;height:55px;border-radius:17px;display:grid;place-items:center;font-size:29px;font-weight:700}.brand b{font-size:24px;letter-spacing:-.06em}.brand small{display:block;letter-spacing:1.4px;font-size:9px;color:#719286}.auth{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.auth span{font-size:12px;color:var(--muted);max-width:180px;overflow:hidden;text-overflow:ellipsis}.hero{margin-top:17px;border:1px solid #d8e8dd;border-radius:25px;background:linear-gradient(117deg,#e8f5ec,#faf9ed 74%,#fff4e6);padding:31px 35px}.hero h1{font-size:clamp(23px,3vw,34px);line-height:1.47;margin:8px 0;font-weight:700}.hero p{margin:0;color:#59776a}.tag{font-size:11px;background:#daede0;color:#22755f;padding:4px 11px;border-radius:20px}.card{background:var(--surface);border:1px solid var(--line);border-radius:23px;padding:25px 29px;margin-top:17px;box-shadow:var(--shadow)}h2{font-size:20px;line-height:1.5;margin:0 0 16px}h2:after{content:'';display:block;width:38px;height:2px;background:#91cfaa;margin-top:7px}h3{font-size:17px;margin:4px 0 10px}.muted{color:var(--muted);font-size:12px}.info{padding:12px 15px;border:1px solid #deeadf;background:#f2f9f4;color:#4d7060;border-radius:13px;font-size:12px;margin:14px 0}.warn{background:#fff8ec;border-color:#eee1c3;color:#7c6340}.error{color:#b14852}.hidden{display:none!important}.roles,.topics,.tabs,.actions{display:flex;gap:9px;flex-wrap:wrap;align-items:center}.roles button{flex:1;min-width:155px;text-align:left;font-size:17px;min-height:82px}.roles button small{font-size:11px;display:block;color:#708c7f;font-weight:400}.roles button[data-role=student]{background:#fffcf4}.roles button[data-role=parent]{background:#fbf9ff}.roles button[data-role=teacher]{background:#f5fbfa}.active{background:var(--light)!important;border:2px solid var(--green)!important;color:var(--green)!important}.topics button{border-radius:30px;font-size:12px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 16px}label{display:block;font-size:12px;font-weight:700;margin:11px 0}input,select,textarea{display:block;width:100%;border:1px solid #d0e1d5;border-radius:11px;padding:11px 12px;margin-top:6px;background:#fdfefd;color:var(--ink);line-height:1.55}textarea{min-height:86px;resize:vertical}input[type=checkbox]{width:auto;margin:3px 0}.wide{grid-column:1/-1}.result{white-space:pre-wrap;line-height:2.05}.item{background:#fcfefc;border:1px solid var(--line);border-radius:15px;padding:15px;margin:12px 0}.item p{white-space:pre-wrap;margin:8px 0}.item small{color:#799085}.tabs button{border-radius:16px}.tabs button.active{color:#fff!important;background:var(--green)!important}.section{padding:15px 17px;border:1px solid #dce9e0;border-radius:17px;background:#fbfdfa;margin:15px 0}.section h3{margin:0 0 10px}.actions{margin-top:13px}.status{font-size:12px;color:var(--green)}.foot{text-align:center;font-size:11px;color:#8da297;margin-top:30px}@media(max-width:680px){.wrap{padding:12px}.top{padding:12px}.auth{width:100%;justify-content:space-between}.hero{padding:22px}.card{padding:19px 16px}.grid{grid-template-columns:1fr}.roles button{min-width:calc(50% - 8px)}.brand b{font-size:21px}}
 </style>
 </head>
 <body>
 <main class="wrap">
- <header class="head"><div class="brand"><div class="mark">에</div><div><strong>에토 ETHO</strong><small>EDUCATION · ETHICS · CARE</small></div></div><div class="user"><span id="loginState">클라우드 연결 준비 중</span><button type="button" class="primary mini" id="loginBtn">Google 계정으로 로그인</button><button type="button" class="mini hidden" id="logoutBtn">로그아웃</button></div></header>
- <section class="hero"><div class="hero-layout"><div class="hero-copy"><span class="badge">ETHO · CLOUD EDITION</span><h1>마음에 귀 기울이고,<br>오늘의 해결책을 함께 찾습니다.</h1><p class="muted">학생·학부모·교사를 위한 교육지원 공간입니다. 복잡한 상황을 조금 더 명확하게, 조언은 한층 더 실질적으로 전해드려요.</p><div class="cloud-note"><span class="cloud-dot"></span><span>Google 로그인 · 선택적 개인 기록 · 관리자 연구실</span></div></div><div class="hero-side" aria-hidden="true"><div class="hero-chip">🌱 마음과 성장</div><div class="hero-chip">📖 교육적 근거</div><div class="hero-chip">✧ 오늘의 실천</div></div></div></section>
- <section class="card"><h2>01 · 누구의 고민인가요?</h2><div class="roles" id="roles"><button class="active" data-role="student">🧒 학생<small>친구·공부·학교생활</small></button><button data-role="parent">🏠 학부모<small>양육·학습·소통</small></button><button data-role="teacher">🏫 교사<small>생활지도·학급 운영</small></button></div><div class="note">학생 상담은 클라우드에 저장하지 않습니다. 이름·학교명 등 신원을 알 수 있는 내용은 입력하지 마세요.</div></section>
- <section class="card"><h2>02 · 상황을 알려주세요</h2>
-  <div class="cols"><label>나이 또는 연령대<select id="age"><option value="">선택하지 않음</option><option>7~9세</option><option>10~13세</option><option>20대</option><option>30대</option><option>40대</option><option>50대 이상</option></select></label><label>성별<select id="gender"><option value="">응답하지 않음</option><option>여자</option><option>남자</option><option>기타</option></select></label><label id="gradeLabel">학년<select id="grade"><option value="">선택하지 않음</option><option>1학년</option><option>2학년</option><option>3학년</option><option>4학년</option><option>5학년</option><option>6학년</option><option>기타</option></select></label><label>원하는 도움<select id="want"><option>구체적인 해결 방법</option><option>상황 이해</option><option>대화 예시</option><option>학교와 협력하는 방법</option></select></label></div>
-  <p style="font-weight:700">고민 주제</p><div id="topics" class="topics"></div>
-  <label>어떤 상황인가요?<select id="situationChoice"></select></label>
-  <label id="otherLabel" class="hidden">원하는 선택지가 없어요 · 직접 입력<textarea id="otherSituation" maxlength="1500" placeholder="실명·학교명·연락처 등 개인정보는 적지 마세요."></textarea></label>
-  <div class="cols"><label>얼마나 지속되었나요?<select id="duration"><option>잘 모르겠어요</option><option>오늘 처음</option><option>며칠 또는 몇 주</option><option>몇 달 이상</option><option>반복적으로 계속</option></select></label><label>지금까지 해본 방법<select id="tried"><option>아직 특별히 해보지 않음</option><option>대화해 봄</option><option>규칙이나 방법을 바꿈</option><option>학교·보호자와 협의함</option><option>기타</option></select></label></div>
-  <label>상황을 더 설명하고 싶다면 (선택)<textarea id="details" maxlength="1000" placeholder="답변에 필요한 내용만 적어 주세요. 개인정보는 제외해 주세요."></textarea></label>
-  <div id="saveRow" class="note hidden"><label style="display:flex;align-items:flex-start;gap:9px;margin:0"><input type="checkbox" id="saveConsent" style="width:auto;margin:5px 0"> 내 계정에 이번 상담 내용과 답변을 저장합니다. 저장하지 않아도 상담할 수 있어요.</label></div>
-  <div class="actions"><button id="answerBtn" class="primary">에토의 답변 보기</button><span class="message" id="answerStatus"></span></div>
- </section>
- <section id="answerBox" class="card hidden"><h2>에토의 제안</h2><div id="answer" class="result"></div><p id="source" class="tiny"></p><div class="note warn">현재는 교육적 안내 및 승인된 답변 검색 버전입니다. 생성형 AI 서버는 아직 연결되지 않았습니다. 위험한 상황이나 지속되는 피해는 보호자·학교 또는 전문기관의 도움을 우선하세요.</div></section>
- <section id="historyBox" class="card hidden"><h2>내 상담 기록</h2><p class="muted">로그인한 학부모·교사가 직접 저장을 선택한 기록만 표시됩니다.</p><button id="refreshHistory" class="soft">기록 불러오기</button><div id="history"></div></section>
- <section id="research" class="card hidden"><span class="badge">개발자 전용</span><h2>에토 연구 아카이브</h2><p class="muted">논문·현장 사례·이론을 따로 관리합니다. 연구 원문은 관리자만 접근할 수 있습니다. 현장 사례의 <b>승인된 답변 문구</b>는 일반 사용자가 조회 가능한 별도 컬렉션에 공개됩니다.</p>
-  <div class="tabs" id="tabs"><button class="active" data-kind="case">🏫 현장 사례</button><button data-kind="paper">📖 논문·문헌</button><button data-kind="theory">💡 교육이론</button></div>
-  <div class="cols"><label>자료 제목<input id="recTitle" maxlength="150"></label><label>적용 대상<select id="recRole"><option value="parent">학부모</option><option value="student">학생</option><option value="teacher">교사</option><option value="any">전체</option></select></label><label>고민 주제<select id="recTopic"><option value="study">학습</option><option value="friends">또래관계</option><option value="feelings">정서</option><option value="family">가족·소통</option><option value="habits">생활습관</option><option value="fairness">학교생활·공정</option></select></label><label>한국형 SEL 역량 (내부 검토)<select id="recSel"><option>적용 없음</option><option>자기인식</option><option>자기관리</option><option>관계인식</option><option>관계관리</option><option>공동체 가치의 인식·관리</option><option>정신건강 인식·관리</option></select></label><label>도덕과 가치관계 영역<select id="recMoral"><option>적용 없음</option><option>자신과의 관계</option><option>타인과의 관계</option><option>사회·공동체와의 관계</option><option>자연과의 관계</option></select></label><label>검토할 이론<select id="recTheory"><option>적용 없음</option><option>아리스토텔레스</option><option>나딩스</option><option>머독</option><option>매킨타이어</option><option>블라지</option><option>기타</option></select></label></div>
-  <label>핵심 상황·논문 요약·이론 내용<textarea id="recBody" maxlength="4000"></textarea></label><label>예상 답변·실천 원칙 (공개 가능 문구만 입력)<textarea id="recAnswer" maxlength="3500"></textarea></label><label>출처 및 활용 권한<input id="recSource" maxlength="600" placeholder="문헌 정보·이용 허락 여부"></label>
-  <div class="actions"><button id="saveRecord" class="primary">검토 전 자료로 저장</button><button id="resetRecord">입력 초기화</button><span id="researchStatus" class="message"></span></div><div id="records"></div>
-  <p class="tiny">주의: '현장 사례'를 승인하면 답변 문구와 주제·대상·제목이 공개 검색 자료로 등록됩니다. 학생 개인정보나 저작권이 확인되지 않은 문장을 승인하지 마세요. 논문과 이론의 자동 AI 적용은 추후 별도 서버 연결이 필요합니다.</p>
- </section>
- <p class="foot">에토 ETHO · 교육적 성장 지원 · 개인정보 최소 수집</p>
+<header class="top"><div class="brand"><span class="mark">에</span><div><b>에토 ETHO</b><small>EDUCATION · ETHICS · CARE</small></div></div><div class="auth"><span id="loginState">연결 준비 중</span><button type="button" class="primary small" id="loginBtn">Google 계정으로 로그인</button><button type="button" class="small hidden" id="logoutBtn">로그아웃</button></div></header>
+<div id="connectionError" class="info warn hidden" role="alert"></div>
+<section class="hero"><span class="tag">ETHO · CLOUD EDITION</span><h1>마음을 이해하고,<br>오늘에 맞는 길을 찾아요.</h1><p>학생·학부모·교사의 상황에 귀 기울이는 교육지원 공간입니다. 필요한 질문을 먼저 묻고, 실천할 수 있는 방법을 안내해요.</p></section>
+<section class="card"><h2>01 · 누구의 고민인가요?</h2><div class="roles" id="roles"><button type="button" data-role="student" class="active">🌼 학생<small>친구·공부·학교생활</small></button><button type="button" data-role="parent">🏡 학부모<small>양육·학습·소통</small></button><button type="button" data-role="teacher">🌿 교사<small>생활지도·학급 운영</small></button></div><div class="info">이름·학교명·연락처·학생을 식별할 수 있는 사건 정보는 입력하지 마세요. 학생 상담은 서버에 기록하지 않습니다.</div></section>
+<section class="card"><h2>02 · 상황을 알려주세요</h2><div class="grid">
+<label>나이·연령대<select id="age"><option value="">응답하지 않음</option><option>7~9세</option><option>10~13세</option><option>20대</option><option>30대</option><option>40대</option><option>50대 이상</option></select></label>
+<label>성별<select id="gender"><option value="">응답하지 않음</option><option>여자</option><option>남자</option><option>기타</option></select></label>
+<label id="gradeLabel">학년<select id="grade"><option value="">선택하지 않음</option><option>1학년</option><option>2학년</option><option>3학년</option><option>4학년</option><option>5학년</option><option>6학년</option><option>기타</option></select></label>
+<label>원하는 도움<select id="want"><option>구체적인 해결 방법</option><option>상황 이해</option><option>대화 예시</option><option>학교와 협력하는 방법</option></select></label></div>
+<p><b>고민 주제</b></p><div class="topics" id="topics"></div>
+<label>어떤 상황인가요?<select id="situationChoice"></select></label>
+<label id="otherLabel" class="hidden">원하는 답이 없어요 · 직접 입력<textarea id="otherSituation" maxlength="1200" placeholder="개인정보 없이 상황을 간단히 적어 주세요."></textarea></label>
+<div class="grid"><label>얼마나 지속되었나요?<select id="duration"><option>잘 모르겠어요</option><option>오늘 처음</option><option>며칠·몇 주</option><option>몇 달 이상</option><option>반복적으로 계속</option></select></label><label>이미 해본 방법<select id="tried"><option>아직 특별히 해보지 않음</option><option>대화해 봄</option><option>규칙·방법을 바꿈</option><option>학교·보호자와 협의함</option><option>기타</option></select></label></div>
+<label>추가 설명 (선택)<textarea id="details" maxlength="700" placeholder="실명이나 식별되는 사실은 적지 마세요."></textarea></label>
+<div id="saveRow" class="info hidden"><label style="display:flex;gap:10px;align-items:flex-start;margin:0"><input type="checkbox" id="saveConsent"/>내 계정에 이 상담 내용과 답변을 저장하겠습니다. 저장하지 않아도 이용할 수 있어요.</label></div>
+<div class="actions"><button type="button" class="primary" id="answerBtn">에토의 제안 보기</button><span id="answerStatus" class="status" role="status"></span></div></section>
+<section class="card hidden" id="answerBox"><h2>에토의 제안</h2><div id="answerText" class="result"></div><p id="answerSource" class="muted"></p><div class="info warn">현재는 개발자가 등록한 상황별 답변을 찾아 제시하는 버전입니다. 생성형 AI 서버는 연결되지 않았으며 진단이나 치료를 대신하지 않습니다.</div></section>
+<section class="card hidden" id="historyBox"><h2>내 상담 기록</h2><p class="muted">로그인한 학부모·교사가 저장을 선택한 기록만 확인할 수 있어요.</p><button type="button" id="historyLoad" class="soft">내 기록 불러오기</button><div id="historyList"></div></section>
+<section class="card hidden" id="research"><span class="tag">개발자 전용 공간</span><h2>에토 연구 아카이브</h2><p class="muted">논문·현장 사례·이론을 따로 기록합니다. 등록한 자료는 Firebase에 즉시 저장됩니다. 공개 상담에 사용되는 문구는 개인 연구 메모와 분리합니다.</p>
+<div class="tabs" id="researchTabs"><button type="button" data-kind="paper" class="active">📚 논문·문헌</button><button type="button" data-kind="case">🏫 학교 현장 사례</button><button type="button" data-kind="theory">🌱 교육이론</button></div>
+<form id="researchForm" autocomplete="off">
+<div id="paperFields" class="section"><h3>📚 논문·문헌 기록</h3><div class="grid">
+<label class="wide">논문·문헌 제목 *<input id="pTitle" maxlength="220"/></label><label>저자<input id="pAuthors" maxlength="170"/></label><label>발행 연도<input id="pYear" maxlength="4" inputmode="numeric" placeholder="2026"/></label>
+<label class="wide">출처<input id="pVenue" maxlength="300" placeholder="학술지, 출판사 또는 연구기관"/></label>
+<label>관련 상담 주제<select id="pTopic"><option value="study">학습</option><option value="friends">또래관계</option><option value="feelings">정서·자기이해</option><option value="family">가족·소통</option><option value="habits">생활습관</option><option value="fairness">학교생활·공정</option></select></label>
+<label class="wide">연구 문제<textarea id="pQuestion" maxlength="900" placeholder="이 논문이 탐구한 주요 질문은 무엇인가요?"></textarea></label>
+<label class="wide">핵심 개념<input id="pKeywords" maxlength="300" placeholder="예: 배려, 실천적 지혜, 주시"/></label>
+<label class="wide">내용 요약 *<textarea id="pSummary" maxlength="2200" placeholder="실제 문헌에서 확인한 주장을 자신의 말로 요약하세요."></textarea></label>
+<label class="wide">내 생각과 느낀 점<textarea id="pReflection" maxlength="1600" placeholder="개인 연구 메모입니다. 상담 이용자에게 공개되지 않습니다."></textarea></label>
+<div class="wide"><label>PDF 업로드 (준비 중)<input id="pPdf" type="file" accept="application/pdf" disabled/></label><p class="muted">현재 Spark 무료 요금제에서는 PDF 온라인 저장 기능을 연결하지 않았습니다. 대신 아래 원문 링크를 사용하세요.</p></div>
+<label class="wide">공개 원문 URL (PDF란 아래)<input id="pUrl" type="url" maxlength="650" placeholder="https://..."/></label></div></div>
+<div id="caseFields" class="section hidden"><h3>🏫 현장 사례 기록</h3><div class="grid">
+<label class="wide">사례 제목 *<input id="cTitle" maxlength="180"/></label><label>상담 대상<select id="cRole"><option value="student">학생</option><option value="parent">학부모</option><option value="teacher">교사</option><option value="any">전체</option></select></label>
+<label>학교상담 문제 유형<select id="cTopic"><option value="study">학습</option><option value="friends">또래관계</option><option value="feelings">정서·자기이해</option><option value="family">가족·소통</option><option value="habits">생활습관</option><option value="fairness">학교생활·공정</option></select></label>
+<label>도덕과 영역<select id="cMoral"><option>타인과의 관계</option><option>자신과의 관계</option><option>사회·공동체와의 관계</option><option>자연과의 관계</option><option>직접 적용하지 않음</option></select></label>
+<label>K-SEL 역량<select id="cSel"><option>적용 없음</option><option>자기인식</option><option>자기관리</option><option>관계인식</option><option>관계관리</option><option>공동체 가치의 인식·관리</option><option>정신건강 인식·관리</option></select></label>
+<label>검토할 이론<select id="cTheory"><option>적용 없음</option><option>아리스토텔레스</option><option>나딩스</option><option>머독</option><option>매킨타이어</option><option>블라지</option><option value="other">기타 · 직접 입력</option></select></label>
+<label id="cTheoryOtherLabel" class="hidden">기타 이론<input id="cTheoryOther" maxlength="100"/></label>
+<label class="wide">핵심 상황 *<textarea id="cBody" maxlength="2200" placeholder="실제 학생을 특정할 수 없도록 일반화해 작성하세요."></textarea></label>
+<label class="wide">상황별 예상 답변 *<textarea id="cAnswer" maxlength="3200" placeholder="학생·학부모·교사에게 제시할 수 있는 독자적인 답변 문구"></textarea></label>
+<label class="wide">출처와 활용 권한 *<input id="cSource" maxlength="400" placeholder="예: 직접 만든 가상 사례 (자체 작성)"/></label></div><div class="info warn">이 탭에서 저장하면 <b>제목·대상·주제·예상 답변이 일반 이용자 상담 검색에 즉시 반영</b>됩니다. 비식별화와 사용 권한을 확인한 자료만 저장하세요. 원래의 상세 사례와 이론 메모는 개발자만 볼 수 있습니다.</div></div>
+<div id="theoryFields" class="section hidden"><h3>🌱 이론 적용 메모</h3><div class="grid"><label>교육이론<select id="tName"><option>아리스토텔레스</option><option>나딩스</option><option>머독</option><option>매킨타이어</option><option>블라지</option><option>그 밖의 이론</option></select></label><label>연계할 주제<select id="tTopic"><option value="study">학습</option><option value="friends">또래관계</option><option value="feelings">정서</option><option value="family">가족·소통</option><option value="habits">생활습관</option><option value="fairness">학교생활·공정</option></select></label>
+<label class="wide">핵심 개념 *<textarea id="tConcept" maxlength="1000"></textarea></label><label class="wide">적절한 적용 상황<textarea id="tFit" maxlength="1100"></textarea></label><label class="wide">적용 금지·주의 상황<textarea id="tAvoid" maxlength="1100"></textarea></label><label class="wide">출처<input id="tSource" maxlength="450"/></label></div><div class="info">이론은 저장과 동시에 관리자 연구실에 누적됩니다. 상담에 노출되는 것은 공개 가능한 <b>핵심 개념과 적용 조건</b>뿐이며 개인 메모·원문은 공개되지 않습니다. 생성형 AI의 실제 이론 판단은 향후 서버가 필요합니다.</div></div>
+<div class="actions"><button type="submit" class="primary" id="researchSave">연구자료 저장</button><button type="button" id="researchClear">새로 작성</button><span id="researchStatus" class="status" role="status"></span></div></form>
+<h3 style="margin-top:22px">내가 기록한 자료</h3><div id="researchList"></div>
+</section>
+<p class="foot">에토 ETHO · 교육적 성장 지원 · 연구와 상담의 분리</p>
 </main>
-<script>
-window.addEventListener('load', () => {
-  setTimeout(() => {
-    if (document.documentElement.dataset.firebaseReady !== 'yes') {
-      const el = document.getElementById('loginState');
-      if (el) el.textContent = 'Firebase 연결 오류 · 새로고침 또는 네트워크 확인';
-    }
-  }, 4500);
-});
-</script>
 <script type="module">
-import {initializeApp} from 'https://www.gstatic.com/firebasejs/13.3.0/firebase-app.js';
-import {getAuth,GoogleAuthProvider,signInWithPopup,signOut,onAuthStateChanged} from 'https://www.gstatic.com/firebasejs/13.3.0/firebase-auth.js';
-import {getFirestore,collection,doc,getDoc,getDocs,addDoc,deleteDoc,query,where,limit,serverTimestamp,writeBatch} from 'https://www.gstatic.com/firebasejs/13.3.0/firebase-firestore.js';
+import {initializeApp} from 'https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js';
+import {getAuth,GoogleAuthProvider,signInWithPopup,signOut,onAuthStateChanged} from 'https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js';
+import {getFirestore,collection,doc,getDoc,getDocs,addDoc,deleteDoc,query,where,limit,serverTimestamp,writeBatch} from 'https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js';
 
-// Firebase 웹앱 연결 정보: 서비스 계정 비밀키가 아니라 공개 웹앱 식별값입니다.
-const firebaseConfig={
- apiKey:'AIzaSyCN3tmiDRrTZljGzTund0_4sB-y_U3iz54',
- authDomain:'etho-9a6bb.firebaseapp.com',
- projectId:'etho-9a6bb',
- storageBucket:'etho-9a6bb.firebasestorage.app',
- messagingSenderId:'1085427524088',
- appId:'1:1085427524088:web:5bf4ce2c9b5ffb8604360d',
- measurementId:'G-2WC56KYCT1'
-};
-const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app),$=id=>document.getElementById(id);
-const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-let user=null,admin=false,role='student',topic='feelings',kind='case',editId=null;
-const themes={student:['#347e6e','#e8f4ec'],parent:['#7c729e','#f2effa'],teacher:['#277d86','#eaf6f7']};
-const topicMap={student:[['feelings','💗 감정'],['friends','🤝 친구'],['study','📚 공부'],['family','🏠 가족'],['fairness','⚖️ 학교생활']],parent:[['study','📚 자녀 학습'],['friends','🤝 친구 관계'],['feelings','💗 자녀 정서'],['family','🏠 부모·자녀 소통'],['habits','⏰ 생활습관'],['fairness','⚖️ 학교생활']],teacher:[['friends','🤝 교우관계'],['study','📚 학습지도'],['feelings','💗 학생 정서'],['fairness','⚖️ 생활지도'],['family','🏠 학부모 소통'],['habits','⏰ 학급 운영']]};
-const situationMap={study:['공부를 시작하려 하지 않아요','공부를 해도 결과가 기대만큼 나오지 않아요','집중하는 데 어려움이 있어요','공부 때문에 자주 다퉈요'],friends:['친구와 다투었어요','친구에게 서운한 일이 있어요','친구들에게 놀이에서 제외되었어요','친구가 반복적으로 놀려요'],feelings:['걱정과 불안이 많아요','화를 자주 내거나 감정을 조절하기 어려워요','자신감이 부족해요','속상한 일을 털어놓기 어려워요'],family:['서로 대화가 잘 통하지 않아요','가족과 자주 다퉈요','요구와 기대가 달라 갈등이 생겨요'],habits:['스마트폰이나 게임 사용이 고민이에요','생활 리듬이나 약속을 지키기 어려워요','일상 습관을 바꾸기 어려워요'],fairness:['규칙을 둘러싼 갈등이 있어요','공평하지 않다고 느껴요','학급 안에서 갈등이 반복돼요']};
-const names={study:'학습',friends:'관계',feelings:'정서',family:'가족·소통',habits:'생활습관',fairness:'학교생활'};
-const $text=(id,msg)=>{$(id).textContent=msg};
-function chooseRole(r){role=r;document.documentElement.style.setProperty('--main',themes[r][0]);document.documentElement.style.setProperty('--sub',themes[r][1]);document.querySelectorAll('[data-role]').forEach(b=>b.classList.toggle('active',b.dataset.role===r));$('saveRow').classList.toggle('hidden',r==='student');$('saveConsent').checked=false;$('gradeLabel').firstChild.textContent=r==='parent'?'자녀 학년':r==='teacher'?'담당 학년':'학년';$('topics').innerHTML=topicMap[r].map(([t,n])=>`<button data-topic="${t}">${n}</button>`).join('');chooseTopic(topicMap[r][0][0]);$('historyBox').classList.toggle('hidden',!user||r==='student');$('answerBox').classList.add('hidden');}
-function chooseTopic(t){topic=t;document.querySelectorAll('[data-topic]').forEach(b=>b.classList.toggle('active',b.dataset.topic===t));$('situationChoice').innerHTML=(situationMap[t]||[]).map(s=>`<option>${esc(s)}</option>`).join('')+'<option value="other">원하는 답이 없어요 · 직접 입력</option>';$('otherLabel').classList.add('hidden');}
-$('roles').onclick=e=>{const b=e.target.closest('[data-role]');if(b)chooseRole(b.dataset.role)};
-$('topics').onclick=e=>{const b=e.target.closest('[data-topic]');if(b)chooseTopic(b.dataset.topic)};
-$('situationChoice').onchange=()=>{$('otherLabel').classList.toggle('hidden',$('situationChoice').value!=='other')};
-const risk=/(자살|자해|죽고 싶|죽어버리고 싶|학대|성폭력|폭행|흉기|협박|반복.*따돌림|반복.*괴롭힘)/;
-function dataFromForm(){const chosen=$('situationChoice').value;return{role,topic,age:$('age').value,gender:$('gender').value,grade:$('grade').value,want:$('want').value,duration:$('duration').value,tried:$('tried').value,situation:chosen==='other'?$('otherSituation').value.trim():chosen,details:$('details').value.trim()}}
-function basicAnswer(p){let advice={study:'학습이 어려운 이유를 의지 부족으로 단정하지 말고, 과제의 난이도와 시작할 때의 부담을 나누어 살펴보세요. 오늘은 시작할 시간이나 문제 순서를 두 가지 중 직접 고르게 한 뒤 짧은 단위로 시도해 보세요.',friends:'일어난 사실과 각자의 해석을 나누어 살펴보세요. 상대방의 의도를 단정하기 전에 구체적인 말을 확인하고, 반복적인 배제·놀림은 혼자 해결하게 하지 마세요.',feelings:'느끼는 감정은 잘못이 아닙니다. 감정의 이름과 그때의 행동을 구분하고, 마음이 복잡할 때 잠시 멈추거나 신뢰할 수 있는 사람에게 이야기해 보세요.',family:'서로 원하는 것이 무엇인지 한 가지씩 확인해 보세요. 상대를 비난하기보다 어떤 순간이 힘든지 구체적으로 표현하는 대화가 도움이 됩니다.',habits:'한 번에 모든 습관을 바꾸려 하기보다 실천 가능한 작은 목표를 정하세요. 실천하기 어려운 시간·상황을 살펴보고 함께 조정해 보세요.',fairness:'규칙이 누구에게 어떤 영향을 주는지 살펴보세요. 공평함은 모두에게 기계적으로 똑같이 하는 것만을 뜻하지 않으므로 권리·안전·사정도 함께 고려해야 합니다.'}[p.topic]||'현재 상황을 차근차근 구분해 보세요.';
- const who=p.role==='student'?'부모님이나 선생님':p.role==='parent'?'담임교사':'동료 교사 또는 학교의 담당자';
- return `말씀하신 고민은 “${p.situation}”이군요. ${p.duration==='반복적으로 계속'?'반복되는 상황이므로 일회성 문제보다 조금 더 체계적인 도움이 필요할 수 있어요.':''}\n\n① 먼저 살펴볼 점\n${advice}\n\n② 지금 해볼 방법\n이미 시도한 방법은 “${p.tried}”으로 이해했어요. 효과가 없었다면 똑같은 방법을 반복하기보다 부담을 줄이고 하루에 실천할 한 가지 행동을 정해 보세요.\n\n③ 대화 예시\n“어떤 부분이 가장 어려운지 알고 싶어. 오늘은 우리가 바꿀 수 있는 방법 하나를 같이 정해 보자.”\n\n④ 추가 도움\n어려움이 지속되거나 피해가 생긴다면 ${who}과 함께 사실을 확인하고 지원 방법을 찾으세요.\n\n※ 승인된 관련 사례가 아직 없어 기본 교육지원 안내를 드렸습니다.`;
+const firebaseConfig={apiKey:'AIzaSyCN3tmiDRrTZljGzTund0_4sB-y_U3iz54',authDomain:'etho-9a6bb.firebaseapp.com',projectId:'etho-9a6bb',storageBucket:'etho-9a6bb.firebasestorage.app',messagingSenderId:'1085427524088',appId:'1:1085427524088:web:5bf4ce2c9b5ffb8604360d',measurementId:'G-2WC56KYCT1'};
+const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app);
+const $=id=>document.getElementById(id), status=(id,v)=>$(id).textContent=v,esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let currentUser=null,isAdmin=false,role='student',topic='feelings',kind='paper',editing=null;
+const topics={student:[['feelings','💗 내 마음'],['friends','🤝 친구 관계'],['study','📚 공부'],['family','🏠 가족'],['fairness','⚖️ 학교생활']],parent:[['study','📚 자녀 학습'],['friends','🤝 친구 관계'],['feelings','💗 자녀 정서'],['family','🏠 부모·자녀 대화'],['habits','⏰ 생활습관']],teacher:[['friends','🤝 교우관계'],['study','📚 학습 지도'],['feelings','💗 학생 정서'],['fairness','⚖️ 생활지도'],['family','🏠 학부모 소통'],['habits','⏰ 학급 운영']]};
+const choices={study:['공부를 시작하지 않아요','공부를 해도 성과가 낮아요','집중하기 어려워요','공부 때문에 갈등이 생겨요'],friends:['친구와 다투었어요','친구에게 서운해요','놀이에서 제외되었어요','반복해서 놀림을 당해요'],feelings:['불안하거나 걱정이 많아요','감정을 조절하기 어려워요','자신감이 낮아요','속상한 마음을 털어놓기 어려워요'],family:['가족과 대화가 어려워요','가족과 자주 다퉈요','서로의 기대가 달라요'],habits:['스마트폰·게임 사용이 고민이에요','생활 약속을 지키기 어려워요','습관을 바꾸기 어려워요'],fairness:['규칙 문제로 갈등이 있어요','불공평한 일이 있어요','학급에서 갈등이 반복돼요']};
+function show(el,on){$(el).classList.toggle('hidden',!on)}
+function chooseRole(value){role=value;document.querySelectorAll('[data-role]').forEach(b=>b.classList.toggle('active',b.dataset.role===value));document.documentElement.style.setProperty('--green',value==='parent'?'#736998':value==='teacher'?'#287c80':'#287b68');document.documentElement.style.setProperty('--light',value==='parent'?'#f3eff9':value==='teacher'?'#e9f5f5':'#e9f6ed');$('gradeLabel').firstChild.textContent=value==='parent'?'자녀 학년':value==='teacher'?'담당 학년':'학년';$('topics').innerHTML=topics[value].map(([k,v])=>`<button type="button" data-topic="${k}">${v}</button>`).join('');chooseTopic(topics[value][0][0]);show('saveRow',value!=='student');$('saveConsent').checked=false;show('historyBox',!!currentUser&&value!=='student');show('answerBox',false)}
+function chooseTopic(t){topic=t;document.querySelectorAll('[data-topic]').forEach(b=>b.classList.toggle('active',b.dataset.topic===t));$('situationChoice').innerHTML=choices[t].map(x=>`<option>${esc(x)}</option>`).join('')+'<option value="other">원하는 답이 없어요 · 직접 입력</option>';show('otherLabel',false)}
+$('roles').addEventListener('click',e=>{const b=e.target.closest('[data-role]');if(b)chooseRole(b.dataset.role)});
+$('topics').addEventListener('click',e=>{const b=e.target.closest('[data-topic]');if(b)chooseTopic(b.dataset.topic)});
+$('situationChoice').addEventListener('change',()=>show('otherLabel',$('situationChoice').value==='other'));
+function formData(){return{role,topic,age:$('age').value,gender:$('gender').value,grade:$('grade').value,want:$('want').value,duration:$('duration').value,tried:$('tried').value,situation:$('situationChoice').value==='other'?$('otherSituation').value.trim():$('situationChoice').value,details:$('details').value.trim()}}
+const dangerWords=/(자해|자살|죽고 싶|학대|성폭력|폭행|협박|흉기|반복.{0,8}따돌림|반복.{0,8}괴롭힘|반복.{0,8}놀림)/;
+function baseReply(p){const guide={study:'공부를 하지 않는 이유를 의지 문제로 단정하지 마세요. 내용이 어려운지, 시작하는 부담이 큰지, 관계 갈등이 중심인지 구별해 보세요. 오늘은 작은 과제부터 시작하고 수행 순서를 스스로 선택하도록 돕는 것이 좋겠습니다.',friends:'어떤 행동이 실제로 있었고 어떻게 받아들여졌는지 구분해 보세요. 상대의 의도를 추측만으로 단정하지 말고 확인하되, 반복적 배제와 괴롭힘은 보호가 우선입니다.',feelings:'감정과 행동을 구분해 보세요. 지금 느끼는 감정에 이름을 붙이고, 마음을 가라앉힌 뒤 선택할 행동 하나를 정해 보세요.',family:'갈등 중에는 결론을 서둘러 내리지 않고 각자가 어려워하는 순간을 한 가지씩 들어보세요. 비난 대신 구체적 요청을 표현하면 도움이 됩니다.',habits:'습관을 한꺼번에 바꾸려 하기보다 작은 목표를 정해 보세요. 언제 지키기 어려운지 확인하고 함께 실천 계획을 조정하세요.',fairness:'규칙의 목적과 모든 당사자의 안전·권리를 함께 검토하세요. 상황이 다르다면 공정한 대응이 반드시 똑같은 대응을 의미하지는 않습니다.'}[p.topic];const helper=p.role==='student'?'믿을 만한 보호자나 선생님':p.role==='parent'?'담임교사': '학교 담당자 또는 동료 교사';return `말씀하신 상황은 “${p.situation}”이군요.\n\n① 상황을 살펴보면\n${guide}\n\n② 지금 할 수 있는 일\n이미 시도한 방법(${p.tried})에서 효과가 작았다면 같은 방법을 계속 반복하지 말고, 오늘 바로 실천할 수 있는 작은 행동 하나를 정해 보세요.\n\n③ 말하기 예시\n“어떤 부분이 가장 어려웠는지 궁금해. 우리가 바꿔 볼 방법을 하나 같이 정해 보자.”\n\n④ 더 도움이 필요할 때\n${p.duration==='반복적으로 계속'?'문제가 반복되고 있으니 기록을 남기고 ':''}${helper}에게 현재 상황을 이야기해 함께 대응해 보세요.`}
+function overlap(text,terms){
+ const hay=(text||'').toLowerCase();
+ const similar=[['공부','학습','숙제','과제'],['시작','미루','착수'],['친구','또래','교우'],['다투','싸우','갈등'],['배제','소외','따돌림'],['마음','감정','정서','불안'],['규칙','약속','공정','공평']];
+ return terms.filter(w=>{
+   const clean=w.toLowerCase().replace(/(으로|에서|에게|까지|부터|하고|하는|하니|해야|하기|하지|을|를|이|가|은|는|에|도)$/,'');
+   if(clean.length>=2&&hay.includes(clean))return true;
+   return similar.some(group=>group.some(t=>w.includes(t))&&group.some(t=>hay.includes(t)));
+ }).length;
 }
-function score(g,p){let s=(g.topic===p.topic?10:0)+(g.role===p.role?7:g.role==='any'?3:0);const words=(p.situation+' '+p.details).match(/[가-힣A-Za-z]{2,}/g)||[];const text=(g.title+' '+g.answer).toLowerCase();for(const w of [...new Set(words)].slice(0,35))if(text.includes(w.toLowerCase()))s++;return s;}
-async function publishedGuidance(){const q=query(collection(db,'guidance'),where('visible','==',true),limit(100));const snap=await getDocs(q);return snap.docs.map(d=>({id:d.id,...d.data()}));}
-$('answerBtn').onclick=async()=>{const p=dataFromForm();if(!p.situation){$text('answerStatus','상황을 선택하거나 직접 입력해 주세요.');return}if(p.role==='student')$('saveConsent').checked=false;$text('answerStatus','상황을 살펴보는 중…');let response='',source='',ref='';if(risk.test(p.situation+' '+p.details)){response='이 상황은 먼저 안전을 확인해야 할 수 있어요. 혼자 해결하거나 억지로 화해하지 말고, 믿을 수 있는 보호자·교사·학교 담당자에게 바로 알려 주세요. 즉각적인 위험이 있다면 112 또는 119에 도움을 요청하세요.';source='안전을 우선한 기본 안내';}else{try{const list=await publishedGuidance();const rated=list.filter(x=>x.answer&&x.topic===p.topic&&(x.role===p.role||x.role==='any')).map(x=>({x,s:score(x,p)})).sort((a,b)=>b.s-a.s);if(rated.length){const g=rated[0].x;response=`① 현재 고민\n${p.situation}\n\n② 참고할 대응 방법\n${g.answer}\n\n③ 상황에 맞게 조정할 점\n선생님이 승인한 안내이더라도 나이·지속 기간·이미 시도한 방법·위험 수준에 따라 방법을 조정해야 합니다.`;source='에토 검토·승인 답변: '+g.title+' (ID '+g.id+')';ref=g.id;}else{response=basicAnswer(p);source='기본 교육지원 안내';}}catch(e){response=basicAnswer(p);source='연결된 승인 자료를 읽지 못해 기본 안내를 표시함';$text('answerStatus','Firestore 읽기 오류: '+e.code);}}$('answer').textContent=response;$text('source',source);$('answerBox').classList.remove('hidden');$('answerBox').scrollIntoView({behavior:'smooth'});if(!$('answerStatus').textContent.startsWith('Firestore 읽기 오류'))$text('answerStatus','답변을 표시했습니다.');if(p.role!=='student'&&$('saveConsent').checked){if(!user){$text('answerStatus','답변은 표시했어요. 기록을 저장하려면 Google 로그인하세요.');return}try{await addDoc(collection(db,'users',user.uid,'sessions'),{...p,answer:response,reference:ref,createdAt:serverTimestamp()});$text('answerStatus','내 계정에 상담 기록을 저장했습니다.');}catch(e){$text('answerStatus','상담 기록 저장 실패: '+e.code)}}};
-$('loginBtn').onclick=async()=>{try{await signInWithPopup(auth,new GoogleAuthProvider())}catch(e){alert('로그인을 완료하지 못했어요 ('+(e.code||'연결 오류')+').\nFirebase Authentication에서 Google 사용 설정 및 승인된 도메인 sunie120293-boop.github.io를 확인해 주세요.')}};
-$('logoutBtn').onclick=()=>signOut(auth);
-async function checkAdmin(u){if(!u)return false;try{const d=await getDoc(doc(db,'admins',u.uid));return d.exists()&&d.data().active===true}catch{return false}}
-onAuthStateChanged(auth,async u=>{user=u;admin=await checkAdmin(u);$text('loginState',u?(u.displayName||u.email||'로그인 완료'):'로그인하지 않음');$('loginBtn').classList.toggle('hidden',!!u);$('logoutBtn').classList.toggle('hidden',!u);$('historyBox').classList.toggle('hidden',!u||role==='student');$('research').classList.toggle('hidden',!admin);if(admin)loadResearch();});
-async function loadHistory(){if(!user||role==='student')return;$text('history','불러오는 중…');try{const snap=await getDocs(query(collection(db,'users',user.uid,'sessions'),limit(60)));const rows=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));$('history').innerHTML=rows.length?rows.map(r=>`<div class="entry"><strong>${esc(r.situation)}</strong><p>${esc(r.answer)}</p><button class="mini danger" data-del-session="${esc(r.id)}">기록 삭제</button></div>`).join(''):'저장한 상담 기록이 없습니다.'}catch(e){$text('history','조회 실패: '+e.code)}}
-$('refreshHistory').onclick=loadHistory;
-$('history').onclick=async e=>{const b=e.target.closest('[data-del-session]');if(!b||!user||!confirm('상담 기록을 삭제할까요?'))return;await deleteDoc(doc(db,'users',user.uid,'sessions',b.dataset.delSession));loadHistory()};
-function resetForm(){editId=null;['recTitle','recBody','recAnswer','recSource'].forEach(id=>$(id).value='');$text('researchStatus','');$('saveRecord').textContent='검토 전 자료로 저장';}
-function setKind(k){kind=k;document.querySelectorAll('[data-kind]').forEach(b=>b.classList.toggle('active',b.dataset.kind===k));resetForm();loadResearch()}
-$('tabs').onclick=e=>{const b=e.target.closest('[data-kind]');if(b)setKind(b.dataset.kind)};
-$('resetRecord').onclick=resetForm;
-function recordData(){return{kind,title:$('recTitle').value.trim(),role:$('recRole').value,topic:$('recTopic').value,ksel:$('recSel').value,moral:$('recMoral').value,theory:$('recTheory').value,body:$('recBody').value.trim(),answer:$('recAnswer').value.trim(),source:$('recSource').value.trim()}}
-$('saveRecord').onclick=async()=>{if(!admin)return;const data=recordData();if(!data.title)return $text('researchStatus','제목을 적어 주세요.');try{if(editId){const batch=writeBatch(db);batch.set(doc(db,'knowledge',editId),{...data,status:'draft',updatedAt:serverTimestamp()},{merge:true});batch.delete(doc(db,'guidance',editId));await batch.commit();$text('researchStatus','수정했고 재검토 전 상태로 변경했습니다.');}else{await addDoc(collection(db,'knowledge'),{...data,status:'draft',createdAt:serverTimestamp(),updatedAt:serverTimestamp()});$text('researchStatus','검토 전 자료로 저장했습니다.')}resetForm();await loadResearch()}catch(e){$text('researchStatus','저장 실패: '+e.code)}};
-async function loadResearch(){if(!admin)return;$text('records','등록 자료를 불러오는 중…');try{const s=await getDocs(query(collection(db,'knowledge'),limit(200)));const rows=s.docs.map(d=>({id:d.id,...d.data()})).filter(d=>d.kind===kind);$('records').innerHTML=rows.length?rows.map(r=>`<div class="entry"><span class="badge">${esc(r.status||'draft')}</span><h3>${esc(r.title)}</h3><p>${esc(r.body)}</p><details><summary>예상 답변·출처 보기</summary><p>${esc(r.answer)}</p><p class="tiny">${esc(r.source)}</p></details><div class="actions"><button class="mini" data-edit="${esc(r.id)}">수정</button>${r.status!=='approved'?`<button class="mini primary" data-approve="${esc(r.id)}">검토 후 승인</button>`:`<button class="mini" data-revoke="${esc(r.id)}">승인 취소</button>`}<button class="mini danger" data-del-record="${esc(r.id)}">삭제</button></div></div>`).join(''):'아직 이 유형에 저장된 자료가 없습니다.'}catch(e){$text('records','자료 불러오기 실패: '+e.code)}}
-$('records').onclick=async e=>{const b=e.target.closest('button[data-edit],button[data-approve],button[data-revoke],button[data-del-record]');if(!b||!admin)return;const id=b.dataset.edit||b.dataset.approve||b.dataset.revoke||b.dataset.delRecord,ref=doc(db,'knowledge',id);try{const snap=await getDoc(ref);if(!snap.exists())return;const r=snap.data();if(b.dataset.edit){editId=id;kind=r.kind;for(const [field,selector] of [['title','recTitle'],['role','recRole'],['topic','recTopic'],['ksel','recSel'],['moral','recMoral'],['theory','recTheory'],['body','recBody'],['answer','recAnswer'],['source','recSource']])$(selector).value=r[field]??'';$('saveRecord').textContent='수정 저장 (재검토)';$('research').scrollIntoView({behavior:'smooth'});return}
-if(b.dataset.approve){if(!r.source?.trim()){alert('승인하려면 출처와 활용 권한을 먼저 기록하세요.');return}if(r.kind==='case'&&!r.answer?.trim()){alert('공개할 답변 문구를 입력하세요.');return}if(!confirm(r.kind==='case'?'답변 문구·제목·대상·주제가 일반 이용자에게 공개됩니다. 개인정보와 저작권을 확인했나요?':'내부 연구자료로 승인할까요?'))return;const batch=writeBatch(db);batch.set(ref,{status:'approved',approvedAt:serverTimestamp(),updatedAt:serverTimestamp()},{merge:true});if(r.kind==='case')batch.set(doc(db,'guidance',id),{title:r.title,role:r.role,topic:r.topic,answer:r.answer,visible:true,updatedAt:serverTimestamp()});await batch.commit()}
-if(b.dataset.revoke){const batch=writeBatch(db);batch.set(ref,{status:'inactive',updatedAt:serverTimestamp()},{merge:true});batch.delete(doc(db,'guidance',id));await batch.commit()}
-if(b.dataset.delRecord){if(!confirm('연구자료를 삭제할까요?'))return;const batch=writeBatch(db);batch.delete(ref);batch.delete(doc(db,'guidance',id));await batch.commit()}await loadResearch()}catch(err){alert('처리 실패: '+(err.code||err.message))}};
+function words(p){return [...new Set((p.situation+' '+p.details).match(/[가-힣A-Za-z]{2,}/g)||[])].slice(0,35)}
+async function publicRecords(){const snap=await getDocs(query(collection(db,'guidance'),where('visible','==',true),limit(120)));return snap.docs.map(d=>({id:d.id,...d.data()}))}
+$('answerBtn').addEventListener('click',async()=>{const p=formData();if(!p.situation)return status('answerStatus','상황을 선택하거나 적어 주세요.');status('answerStatus','답변을 준비하는 중…');$('answerBtn').disabled=true;let body='',source='',used='';if(dangerWords.test(p.situation+' '+p.details)){body='먼저 안전을 확인해야 하는 상황일 수 있어요. 혼자 해결하거나 억지로 화해하지 마세요. 보호자·교사·학교 담당자 등 믿을 수 있는 어른에게 알려 주세요. 즉각적인 위험이 있으면 112 또는 119에 연락하세요.';source='안전 우선 안내'}else{try{const records=await publicRecords(),tokens=words(p),cases=records.filter(x=>x.kind==='case'&&x.topic===p.topic&&(x.role===p.role||x.role==='any')&&x.answer).map(x=>({r:x,n:overlap(x.title+' '+x.answer,tokens)})).sort((a,b)=>b.n-a.n);const top=cases[0];if(top&&top.n>=1){body=`① 지금의 상황\n${p.situation}\n\n② 관련 사례에서 제안하는 방법\n${top.r.answer}\n\n③ 내 상황에 적용하기 전에\n같은 주제라도 학년, 반복 여부, 이미 시도한 방법에 따라 달라질 수 있어요. ${p.duration==='반복적으로 계속'?'문제가 반복된다면 특히 학교나 보호자와 함께 안전과 원인을 확인해 주세요.':'우선 부담이 적은 방법 하나부터 시도해 보세요.'}`;source='개발자 등록 사례: '+top.r.title;used=top.r.id}else{body=baseReply(p);source='에토 기본 교육지원 안내'}const papers=records.filter(x=>x.kind==='paper'&&x.topic===p.topic&&x.snippet&&overlap(x.title+' '+x.snippet,tokens)>=1).slice(0,1);if(papers.length){const note=papers[0];source+=' · 참고 문헌 요약: '+note.title;body+='\n\n⑤ 함께 참고할 연구 관점\n'+note.snippet.slice(0,240)+'… (연구 내용은 현재 상황에 그대로 적용할 수 없을 수 있습니다.)'} }catch(e){body=baseReply(p);source='온라인 자료를 불러오지 못해 기본 안내로 표시';status('answerStatus','자료 조회 오류: '+(e.code||e.message))}}$('answerText').textContent=body;status('answerSource',source);show('answerBox',true);$('answerBtn').disabled=false;document.getElementById('answerBox').scrollIntoView({behavior:'smooth'});if(!$('answerStatus').textContent.includes('오류'))status('answerStatus','답변을 표시했습니다.');if(role!=='student'&&$('saveConsent').checked){if(!currentUser){status('answerStatus','답변은 표시했지만 기록을 저장하려면 로그인해야 합니다.');return}try{await addDoc(collection(db,'users',currentUser.uid,'sessions'),{...p,answer:body,reference:used,createdAt:serverTimestamp()});status('answerStatus','내 계정에 저장했습니다.')}catch(e){status('answerStatus','기록 저장 오류: '+(e.code||e.message))}}});
+$('loginBtn').addEventListener('click',async()=>{try{await signInWithPopup(auth,new GoogleAuthProvider())}catch(e){alert('로그인 실패: '+(e.code||e.message)+'\nFirebase Authentication에서 Google 로그인 및 승인된 도메인을 확인하세요.')}});
+$('logoutBtn').addEventListener('click',()=>signOut(auth));
+async function checkAdmin(u){if(!u)return false;try{const row=await getDoc(doc(db,'admins',u.uid));return row.exists()&&row.data().active===true}catch{return false}}
+onAuthStateChanged(auth,async u=>{currentUser=u;isAdmin=await checkAdmin(u);status('loginState',u?(u.displayName||u.email||'로그인 완료'):'로그인하지 않음');show('loginBtn',!u);show('logoutBtn',!!u);show('historyBox',!!u&&role!=='student');show('research',isAdmin);if(isAdmin)loadResearch()},e=>{status('connectionError','Firebase 인증 오류: '+(e.code||e.message));show('connectionError',true)});
+$('historyLoad').addEventListener('click',async()=>{if(!currentUser||role==='student')return;status('historyList','불러오는 중…');try{const snap=await getDocs(query(collection(db,'users',currentUser.uid,'sessions'),limit(50))),list=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));$('historyList').innerHTML=list.length?list.map(x=>`<div class="item"><b>${esc(x.situation)}</b><p>${esc(x.answer)}</p><button type="button" class="small danger" data-del-history="${esc(x.id)}">기록 삭제</button></div>`).join(''):'저장된 기록이 없습니다.'}catch(e){status('historyList','기록 조회 오류: '+(e.code||e.message))}});
+$('historyList').addEventListener('click',async e=>{const b=e.target.closest('[data-del-history]');if(!b||!currentUser||!confirm('이 기록을 삭제할까요?'))return;try{await deleteDoc(doc(db,'users',currentUser.uid,'sessions',b.dataset.delHistory));$('historyLoad').click()}catch(err){alert(err.message)}});
+function chooseKind(k){kind=k;editing=null;document.querySelectorAll('[data-kind]').forEach(b=>b.classList.toggle('active',b.dataset.kind===k));show('paperFields',k==='paper');show('caseFields',k==='case');show('theoryFields',k==='theory');clearEditor();loadResearch()}
+$('researchTabs').addEventListener('click',e=>{const b=e.target.closest('[data-kind]');if(b)chooseKind(b.dataset.kind)});
+$('cTheory').addEventListener('change',()=>show('cTheoryOtherLabel',$('cTheory').value==='other'));
+function clearEditor(){editing=null;$('researchForm').reset();show('cTheoryOtherLabel',false);$('researchSave').textContent='연구자료 저장';status('researchStatus','')}
+$('researchClear').addEventListener('click',clearEditor);
+function getRecord(){const v=id=>$(id).value.trim();if(kind==='paper')return{kind,title:v('pTitle'),authors:v('pAuthors'),year:v('pYear'),source:v('pVenue'),researchQuestion:v('pQuestion'),keywords:v('pKeywords'),summary:v('pSummary'),reflection:v('pReflection'),url:v('pUrl'),topic:v('pTopic'),role:'any'};if(kind==='case')return{kind,title:v('cTitle'),role:v('cRole'),topic:v('cTopic'),moral:v('cMoral'),ksel:v('cSel'),theory:v('cTheory')==='other'?v('cTheoryOther'):v('cTheory'),body:v('cBody'),answer:v('cAnswer'),source:v('cSource')};return{kind,title:v('tName'),topic:v('tTopic'),role:'any',concept:v('tConcept'),fit:v('tFit'),avoid:v('tAvoid'),source:v('tSource')}}
+function checkRecord(d){if(!d.title)return '제목 또는 이론을 입력해 주세요.';if(d.kind==='paper'){if(!d.summary)return '내용 요약을 입력해 주세요.';if(d.year&&!/^\d{4}$/.test(d.year))return '발행 연도는 4자리로 적어 주세요.';if(d.url&&!/^https?:\/\//i.test(d.url))return '공개 원문 URL은 https:// 형식으로 입력해 주세요.'}if(d.kind==='case'&&(!d.body||!d.answer||!d.source))return '핵심 상황·예상 답변·출처는 필수입니다.';if(d.kind==='theory'&&!d.concept)return '핵심 개념을 입력해 주세요.';return ''}
+function guidanceFor(d){const publicPart={visible:true,kind:d.kind,title:d.title,topic:d.topic||'',role:d.role||'any',updatedAt:serverTimestamp()};if(d.kind==='case')return{...publicPart,answer:d.answer};if(d.kind==='paper')return{...publicPart,snippet:d.summary.slice(0,600),topic:d.topic||'',source:d.source||''};return{...publicPart,snippet:d.concept.slice(0,450),fit:d.fit||'',avoid:d.avoid||''}}
+$('researchForm').addEventListener('submit',async e=>{e.preventDefault();if(!isAdmin)return;const d=getRecord(),err=checkRecord(d);if(err){status('researchStatus',err);return}if(d.kind==='case'&&!confirm('저장과 동시에 예상 답변이 일반 상담의 검색 자료로 공개됩니다. 개인정보·자료 이용 권한을 확인하셨나요?'))return;if(d.kind==='paper'&&!confirm('내용 요약 일부가 일반 상담의 참고 문헌 정보로 공개될 수 있습니다. 내 생각과 느낀 점은 비공개로 보관합니다. 계속할까요?'))return;if(d.kind==='theory'&&!confirm('교육이론의 핵심 개념 일부가 검색용 공개 자료로 반영됩니다. 계속할까요?'))return;$('researchSave').disabled=true;status('researchStatus','클라우드에 저장하는 중…');try{const id=editing||doc(collection(db,'knowledge')).id,batch=writeBatch(db);batch.set(doc(db,'knowledge',id),{...d,updatedAt:serverTimestamp(),...(editing?{}:{createdAt:serverTimestamp()})},{merge:!!editing});batch.set(doc(db,'guidance',id),guidanceFor(d));await batch.commit();clearEditor();status('researchStatus','저장 완료 · 상담 검색 자료에도 반영되었습니다.');await loadResearch()}catch(error){status('researchStatus','저장 실패: '+(error.code||error.message))}finally{$('researchSave').disabled=false}});
+async function loadResearch(){if(!isAdmin)return;status('researchList','자료를 불러오는 중…');try{const snap=await getDocs(query(collection(db,'knowledge'),limit(250)));const list=snap.docs.map(d=>({id:d.id,...d.data()})).filter(x=>x.kind===kind);$('researchList').innerHTML=list.length?list.map(x=>`<div class="item"><h3>${esc(x.title)}</h3>${x.kind==='paper'?`<small>${esc(x.authors||'')} · ${esc(x.year||'')} · ${esc(x.source||'')}</small><p><b>연구 문제</b> ${esc(x.researchQuestion||'')}\n<b>핵심 개념</b> ${esc(x.keywords||'')}\n<b>내용 요약</b> ${esc(x.summary||'')}\n<b>내 생각과 느낀 점</b> ${esc(x.reflection||'')}</p>`:x.kind==='case'?`<small>${esc(x.source||'')}</small><p>${esc(x.body||'')}\n\n<b>예상 답변</b> ${esc(x.answer||'')}</p>`:`<p>${esc(x.concept||'')}\n<b>적용 상황</b> ${esc(x.fit||'')}\n<b>주의 상황</b> ${esc(x.avoid||'')}</p>`}<div class="actions"><button type="button" class="small" data-edit="${esc(x.id)}">수정</button><button type="button" class="small danger" data-delete="${esc(x.id)}">삭제</button></div></div>`).join(''):'아직 등록된 자료가 없습니다.'}catch(err){status('researchList','자료 조회 실패: '+(err.code||err.message))}}
+$('researchList').addEventListener('click',async e=>{const b=e.target.closest('button[data-edit],button[data-delete]');if(!b||!isAdmin)return;const id=b.dataset.edit||b.dataset.delete,ref=doc(db,'knowledge',id);try{const snap=await getDoc(ref);if(!snap.exists())return;const x=snap.data();if(b.dataset.delete){if(!confirm('이 자료를 삭제하면 상담 검색 자료에서도 즉시 제외됩니다. 삭제할까요?'))return;const batch=writeBatch(db);batch.delete(ref);batch.delete(doc(db,'guidance',id));await batch.commit();await loadResearch();return}editing=id;if(x.kind==='paper'){for(const [key,field] of [['title','pTitle'],['authors','pAuthors'],['year','pYear'],['topic','pTopic'],['source','pVenue'],['researchQuestion','pQuestion'],['keywords','pKeywords'],['summary','pSummary'],['reflection','pReflection'],['url','pUrl']])$(field).value=x[key]??(key==='reflection'?x.use||'':key==='source'?x.venue||'':'')}else if(x.kind==='case'){for(const [key,field] of [['title','cTitle'],['role','cRole'],['topic','cTopic'],['moral','cMoral'],['ksel','cSel'],['body','cBody'],['answer','cAnswer'],['source','cSource']])$(field).value=x[key]||'';const known=[...$('cTheory').options].some(o=>o.value===x.theory);$('cTheory').value=known?x.theory:'other';show('cTheoryOtherLabel',!known);if(!known)$('cTheoryOther').value=x.theory||''}else{for(const [key,field] of [['title','tName'],['topic','tTopic'],['concept','tConcept'],['fit','tFit'],['avoid','tAvoid'],['source','tSource']])$(field).value=x[key]||''}status('researchStatus','기존 기록을 수정하고 있습니다.');$('researchSave').textContent='변경 내용 저장';$('research').scrollIntoView({behavior:'smooth'})}catch(err){alert('처리 오류: '+(err.code||err.message))}});
 chooseRole('student');
 </script>
 </body>
