@@ -509,8 +509,8 @@ body {font-family:'Noto Serif KR','Nanum Myeongjo','Batang','바탕',serif;}
       <form class="editor hide" id="theoryEditor">
         <h3 id="theoryEditorTitle">이론 자료 수정</h3>
         <div class="grid2">
-          <label class="field full">자료 제목 *<input id="tTitle" required maxlength="160" placeholder="예: Nel Noddings · 배려윤리"/></label>
-          <label class="field full">학자 이름<input id="tScholar" list="theoryScholarList" maxlength="50" placeholder="예: 블라지" aria-describedby="theoryScholarHelp">
+          <label class="field full">철학 이론<input id="tTitle" required maxlength="160" placeholder="예: 공리주의"/></label>
+          <label class="field full">학자 이름<input id="tScholar" list="theoryScholarList" maxlength="50" placeholder="예: 벤담, 밀" aria-describedby="theoryScholarHelp">
             <datalist id="theoryScholarList"></datalist>
             <small id="theoryScholarHelp">문헌의 학자·분류 목록과 함께 쓰는 이름입니다.</small>
           </label>
@@ -1673,7 +1673,8 @@ function storedPaperCategories(paper) {
   const values = Array.isArray(paper?.categories) ? paper.categories : [paper?.category];
   const names = new Map();
   for (const value of values) {
-    const name = paperCategoryName(savedCategoryForName(value)?.name || value);
+    const alias = theoryIndex().categoryAliases.get(paperCategoryKey(value));
+    const name = paperCategoryName(alias || savedCategoryForName(value)?.name || value);
     if (name && !names.has(paperCategoryKey(name))) names.set(paperCategoryKey(name), name);
   }
   return names;
@@ -1685,7 +1686,8 @@ function paperCategoryCatalog() {
   if (categoryCatalogs.has(db)) return categoryCatalogs.get(db);
   const catalog = new Map();
   for (const record of db.paperCategories) {
-    const name = paperCategoryName(record?.name);
+    const alias = theoryIndex().categoryAliases.get(paperCategoryKey(record?.name));
+    const name = paperCategoryName(alias || record?.name);
     if (name && !catalog.has(paperCategoryKey(name))) {
       catalog.set(paperCategoryKey(name), {name, label:paperCategoryName(record.displayName) || name, record});
     }
@@ -1696,7 +1698,13 @@ function paperCategoryCatalog() {
     }
   }
   for (const theory of listTheoryRecords()) {
-    if (!theory.scholarName) continue;
+    if (!theory.scholarName) {
+      for (const name of theory.legacyScholarKeys) {
+        const entry = catalog.get(paperCategoryKey(name));
+        if (entry) (entry.topicTheoryIds ||= []).push(theory.id);
+      }
+      continue;
+    }
     const key = paperCategoryKey(theory.scholarName);
     const entry = catalog.get(key) || {name:theory.scholarName, record:null};
     entry.label = theory.scholarLabel;
@@ -1821,7 +1829,7 @@ function paperCategoryRecord(item,label) {
   return {
     ...item.record,
     id:item.record?.id || 'paper-category-' + encodeURIComponent(paperCategoryKey(item.name)),
-    name:item.name,
+    name:item.record?.name || item.name,
     displayName:label,
     ...(item.label !== label ? {aliases:[...new Set([...(Array.isArray(item.record?.aliases) ? item.record.aliases : []),item.label])]} : {}),
     ...(item.theoryIds?.length ? {theoryIds:[...new Set([...(Array.isArray(item.record?.theoryIds) ? item.record.theoryIds : []), ...item.theoryIds])]} : {}),
@@ -1849,7 +1857,7 @@ async function registerPaperCategory() {
       const now = new Date().toISOString();
       const row = {
         id:'scholar-' + encodeURIComponent(paperCategoryKey(entry.name)),
-        title:entry.name, scholarName:entry.name, status:'draft', createdAt:now
+        title:entry.label, theoryName:'', scholarName:entry.name, scholarLabel:entry.label, status:'draft', createdAt:now
       };
       result = await commitResearchRecord('theory',row,null,null);
     } else if (!scholar && !entry.record && !entry.theoryIds?.length) {
@@ -2516,7 +2524,7 @@ function linkedTheoriesForPaper(paper, catalog = paperCategoryCatalog()) {
   const links = new Map(theoryLinksForPaper(paper.id).map(link => [link.theoryId, link]));
   for (const key of storedPaperCategories(paper).keys()) {
     const category = catalog.get(key);
-    for (const theoryId of category?.theoryIds || []) {
+    for (const theoryId of [...(category?.theoryIds || []), ...(category?.topicTheoryIds || [])]) {
       if (!links.has(theoryId)) links.set(theoryId,{theoryId, paperId:paper.id, reason:'문헌 분류 · ' + category.label});
     }
   }
@@ -3066,35 +3074,86 @@ const THEORY_DEFAULTS = new Map(THEORY.map(([id, fit, avoid]) =>
 ));
 
 const THEORY_FIELDS = [
-  ['title', 'Title'], ['topic', 'Topic'], ['status', 'Status'], ['concept', 'Concept'],
+  ['theoryName', 'Title'], ['topic', 'Topic'], ['status', 'Status'], ['concept', 'Concept'],
   ['fit', 'Fit'], ['avoid', 'Avoid'], ['source', 'Source']
 ];
 
-function scholarFromTitle(title) {
-  return paperCategoryName(String(title || '').split('·')[0]);
+function theoryHeading(scholar, theory) {
+  return [scholar, theory].filter(Boolean).join(' · ');
 }
 
-function getTheoryRecord(id) {
+// Older cards sometimes put both fields in one title, including “I. Kant. 의무론”.
+// A known scholar takes precedence over punctuation inside a name or a theory.
+function legacyTheoryTitle(title, names, inferScholar) {
+  const nameKey = value => paperCategoryKey(value).replace(/[.．]$/u,'');
+  const expected = new Set(names.filter(Boolean).map(nameKey));
+  let guess;
+  let rank = 0;
+  for (const match of title.matchAll(/[·ㆍ・]|[.．](?=\s|[가-힣])/gu)) {
+    const i = match.index;
+    const head = title.slice(0,i).trim();
+    const tail = title.slice(i + 1).trim();
+    if (!head || !tail) continue;
+    const period = match[0] === '.' || match[0] === '．';
+    const parts = {scholar:head, theory:tail};
+    if (expected.has(nameKey(head))) return parts;
+    if (!inferScholar || (period && /(?:^|[\s.,])[A-Za-z]$/.test(head))) continue;
+    const latinName = /^[\p{Script=Latin} ,.’'()\-]+$/u.test(head) && /(?:^|[ ,])\p{Lu}[\p{Script=Latin}’'\-]+$/u.test(head);
+    const spacedDot = !period && /\s/.test(title[i-1] || '') && /\s/.test(title[i+1] || '');
+    const confidence = period && latinName ? 3 : spacedDot ? 2 : (latinName || SCHOLAR_NAMES.has(head)) ? 1 : 0;
+    if (confidence > rank) {
+      rank = confidence;
+      guess = parts;
+    }
+  }
+  return guess || {scholar:'', theory:title};
+}
+
+function readTheoryRecord(id) {
   const defaults = THEORY_DEFAULTS.get(id);
   const saved = db.theoryNotes[id];
-  if (!defaults && !saved) return null;
   const record = {...defaults, ...saved, id};
-  record.title = englishScholarNames(record.title || id);
-  const originalName = Object.hasOwn(record,'scholarName') ? record.scholarName
-    : id === '이론 적용 없음' ? '' : scholarFromTitle(defaults?.title || record.title);
-  record.scholarName = paperCategoryName(originalName);
-  const key = paperCategoryKey(record.scholarName);
-  const shared = key && (db.paperCategories.find(item => paperCategoryKey(item.name) === key) ||
-    db.paperCategories.find(item => Array.isArray(item.theoryIds) && item.theoryIds.includes(id)) ||
-    savedCategoryForName(record.scholarName));
-  if (shared) record.scholarName = shared.name;
-  record.scholarLabel = paperCategoryName(shared?.displayName) || (SCHOLAR_NAMES.get(record.scholarName) ?? record.scholarName);
-  if (key && paperCategoryKey(scholarFromTitle(record.title)) === key) {
-    const split = record.title.indexOf('·');
-    record.title = record.scholarLabel + (split < 0 ? '' : ' · ' + record.title.slice(split + 1).trim());
+  const title = strip(record.title || defaults?.title || id);
+  const defaultName = defaults?.title.includes(' · ') ? defaults.title.split(' · ')[0] : '';
+  const storedName = paperCategoryName(saved?.scholarName ?? saved?.scholar);
+  const hasSeparateTheory = typeof saved?.theoryName === 'string';
+  const sameAsTitle = !!storedName && paperCategoryKey(storedName) === paperCategoryKey(title);
+  const scholarOnly = !hasSeparateTheory && id.startsWith('scholar-') && sameAsTitle;
+  const previousKey = Object.hasOwn(saved || {},'scholarName') ? storedName :
+    (id === '이론 적용 없음' ? '' : defaultName || paperCategoryName(title.split('·')[0]));
+  const linkedCategory = db.paperCategories.find(item => Array.isArray(item.theoryIds) && item.theoryIds.includes(id));
+  const previousCategory = linkedCategory || savedCategoryForName(previousKey);
+  let scholar = storedName;
+  if (hasSeparateTheory) {
+    record.theoryName = strip(saved.theoryName);
+    scholar = paperCategoryName(saved.scholarLabel) || storedName;
+  } else if (scholarOnly) {
+    record.theoryName = '';
+  } else {
+    const names = [storedName, defaultName, previousCategory?.displayName, previousCategory?.name,
+      ...(Array.isArray(previousCategory?.aliases) ? previousCategory.aliases : [])];
+    const parts = legacyTheoryTitle(title, names, !storedName || sameAsTitle);
+    record.theoryName = parts.theory;
+    const nameWithStop = parts.scholar && (storedName === parts.scholar + '.' || storedName === parts.scholar + '．');
+    scholar = (!sameAsTitle && !nameWithStop && storedName) || parts.scholar || defaultName;
   }
+  const shared = previousCategory || savedCategoryForName(scholar);
+  const scholarKey = hasSeparateTheory ? storedName || scholar : scholar;
+  const categoryName = paperCategoryName(shared?.name);
+  const combinedCategory = categoryName && categoryName !== scholar &&
+    legacyTheoryTitle(categoryName,[scholar,scholarKey],false).scholar;
+  record.scholarName = scholar ? paperCategoryName(combinedCategory ? scholarKey : categoryName || scholarKey) : '';
+  const sharedLabel = paperCategoryName(shared?.displayName);
+  const useSharedLabel = sharedLabel && !(combinedCategory && sharedLabel === categoryName);
+  record.scholarLabel = scholar ? ((useSharedLabel && sharedLabel) || SCHOLAR_NAMES.get(scholar) || scholar) : '';
+  record.title = theoryHeading(record.scholarLabel,record.theoryName);
+
+  // Tags saved by older editions can contain the entire combined title.
+  const oldKeys = Array.isArray(saved?.legacyScholarKeys) ? saved.legacyScholarKeys.filter(name => typeof name === 'string') : [];
+  if (!hasSeparateTheory && previousKey && paperCategoryKey(previousKey) !== paperCategoryKey(record.scholarName)) oldKeys.push(previousKey);
+  if (combinedCategory) oldKeys.push(categoryName);
+  record.legacyScholarKeys = [...new Set(oldKeys)];
   if (defaults && saved && !saved.title) {
-    // Earlier editions stored optional additions to the default guidance.
     record.fit = saved.fit || defaults.fit;
     record.avoid = saved.avoid || defaults.avoid;
   }
@@ -3102,9 +3161,29 @@ function getTheoryRecord(id) {
   return record;
 }
 
+const theoryIndexes = new WeakMap();
+function theoryIndex() {
+  if (theoryIndexes.has(db)) return theoryIndexes.get(db);
+  const records = new Map();
+  const categoryAliases = new Map();
+  for (const id of new Set([...Object.keys(db.theoryNotes), ...THEORY_DEFAULTS.keys()])) {
+    const record = readTheoryRecord(id);
+    records.set(id,record);
+    if (record.scholarName) {
+      for (const name of record.legacyScholarKeys) categoryAliases.set(paperCategoryKey(name),record.scholarName);
+    }
+  }
+  const index = {records, categoryAliases};
+  theoryIndexes.set(db,index);
+  return index;
+}
+
+function getTheoryRecord(id) {
+  return theoryIndex().records.get(id) || null;
+}
+
 function listTheoryRecords() {
-  const ids = new Set([...Object.keys(db.theoryNotes), ...THEORY_DEFAULTS.keys()]);
-  return [...ids].map(getTheoryRecord);
+  return [...theoryIndex().records.values()];
 }
 
 let editTheoryId = null;
@@ -3133,7 +3212,6 @@ function renderTheory() {
     return `<article class="theory-item" data-theory-id="${esc(record.id)}" tabindex="-1">
       <div class="record-meta"><span class="pill">${saved ? esc(statuses.get(record.status) || '연구 중') : '기본 자료'}</span></div>
       <h3>${esc(record.title)}</h3>
-      ${record.scholarLabel && scholarFromTitle(record.title) !== record.scholarLabel ? '<p><b>학자</b> '+esc(record.scholarLabel)+'</p>' : ''}
       ${fields.filter(([, value]) => value).map(([label, value]) =>
         `<p><b>${label}</b> ${esc(englishScholarNames(value))}</p>`).join('')}
       ${renderTheoryPaperLinks(paperGroups.get(record.id) || [])}
@@ -3149,6 +3227,7 @@ function prepareTheoryEditor(record) {
   editScholarVersion = thesisVersion(catalog.get(paperCategoryKey(record?.scholarName))?.record);
   $('theoryScholarList').replaceChildren(...orderedPaperCategoryOptions(catalog)
     .filter(([,item]) => item.theoryIds?.length).map(([,item]) => new Option(item.label,item.label)));
+  $('tTitle').required = !(record?.scholarName && !record.theoryName);
   $('tScholar').value = record?.scholarLabel || '';
   const values = {...record};
   for (const key of ['concept', 'fit', 'avoid', 'source']) values[key] = englishScholarNames(values[key]);
@@ -3189,42 +3268,37 @@ $('theoryEditor').onsubmit = async event => {
   if (locked() || button.disabled) return;
 
   const input = fieldValues('t', THEORY_FIELDS);
-  for (const key of ['title', 'concept', 'fit', 'avoid', 'source']) input[key] = englishScholarNames(input[key]);
-  if (!input.title) return notify('theoryEditorStatus', '자료 제목을 입력해 주세요.', true);
-  if (containsSensitive(JSON.stringify(input))) {
-    return notify('theoryEditorStatus', '전화번호나 이메일 등 개인정보를 지워 주세요.', true);
+  for (const key of ['concept', 'fit', 'avoid', 'source']) input[key] = englishScholarNames(input[key]);
+  const name = paperCategoryName($('tScholar').value);
+  if (!input.theoryName && ($('tTitle').required || !name)) {
+    $('tTitle').focus();
+    return notify('theoryEditorStatus','철학 이론을 입력해 주세요.',true);
+  }
+  if (containsSensitive(JSON.stringify({...input,scholarName:name}))) {
+    return notify('theoryEditorStatus','전화번호나 이메일 등 개인정보를 제외해 주세요.',true);
   }
   const id = editTheoryId ?? uid();
   const previous = db.theoryNotes[id];
-  const catalog = paperCategoryCatalog();
   const current = editTheoryId && getTheoryRecord(id);
+  const catalog = paperCategoryCatalog();
   const currentEntry = current && catalog.get(paperCategoryKey(current.scholarName));
-  let name = paperCategoryName($('tScholar').value);
-  const typedTitle = strip($('tTitle').value);
-  const prefix = scholarFromTitle(typedTitle);
-  if (!name && !current) name = prefix;
-  if (currentEntry && name === current.scholarLabel && current.title.includes('·') && typedTitle.includes('·') &&
-      paperCategoryKey(scholarFromTitle(current.title)) === paperCategoryKey(name) &&
-      paperCategoryKey(prefix) !== paperCategoryKey(name)) name = prefix;
-  if (containsSensitive(name)) return notify('theoryEditorStatus','개인정보를 제외한 학자 이름을 적어 주세요.',true);
+  const selectedEntry = name && findPaperCategoryByName(catalog,name);
+  let stableName = selectedEntry?.name || name;
+  let displayName = selectedEntry?.label || SCHOLAR_NAMES.get(name) || name;
   let rename = null;
-  let stableName = name ? (findPaperCategoryByName(catalog,name)?.name ?? name) : '';
   if (currentEntry && name) {
     stableName = currentEntry.name;
     if (name !== currentEntry.label) {
       if (categoryNameConflict(catalog,paperCategoryKey(stableName),name)) {
         return notify('theoryEditorStatus','이미 다른 학자·분류에서 사용하는 이름이에요.',true);
       }
+      displayName = name;
       rename = {row:paperCategoryRecord(currentEntry,name), version:editScholarVersion};
     }
   }
-  // Store the stable scholar name in a prefixed title. The current spelling is resolved at display time.
-  if (stableName && [name,stableName,current?.scholarLabel].some(v => v && paperCategoryKey(v) === paperCategoryKey(prefix))) {
-    const split = typedTitle.indexOf('·');
-    input.title = stableName + (split < 0 ? '' : ' · ' + typedTitle.slice(split + 1).trim());
-  }
-  const row = {...previous, ...input, id, scholarName:stableName, updatedAt:new Date().toISOString(), published:false};
-
+  const row = {...previous, ...input, id, scholarName:stableName, scholarLabel:displayName,
+    title:theoryHeading(displayName,input.theoryName), updatedAt:new Date().toISOString(), published:false};
+  if (current?.legacyScholarKeys.length) row.legacyScholarKeys = current.legacyScholarKeys;
   button.disabled = true;
   $('cancelTheory').disabled = true;
   try {
